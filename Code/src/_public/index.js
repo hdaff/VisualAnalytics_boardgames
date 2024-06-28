@@ -5,6 +5,7 @@ import { drawPcp } from "./newpcp.js";
 import { draw_scatterplot } from "./scatterplot.js";
 import { drawKmeansScatterplot } from "./kmeans_scatterplot.js";
 import * as d3 from "d3";
+import {drawGraphNetwork} from "./pagerank.js";
 
 let hostname = window.location.hostname;
 let protocol = window.location.protocol;
@@ -59,8 +60,18 @@ let handleKmeansData = (payload) =>{
   
 }
 
-socket.on("RelevantData", handleKmeansData);
+let requestGraphData = (parameters) => {
+  socket.emit("getRelevantGraphData", { parameters });
+}
 
+let handleGraphData = (payload) => {
+  graphData.graph = payload.data;
+  console.log("Graph Daten", graphData.graph);
+  drawGraphNetwork(graphData.graph);
+}
+
+socket.on("RelevantData", handleKmeansData);
+socket.on("RelevantGraphData", handleGraphData);
 
 
 /**
@@ -108,6 +119,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
     requestLDA(parameters);
   };
+  let sampleParams = {
+    top_rank: 100,
+    features: ['ID', 'Name', 'Rank', 'recommendation1', 'recommendation2', 'recommendation3','recommendation4','recommendation5','recommendation6', ]
+  }
+  requestGraphData(sampleParams)
+
+  // let features = ['ID', 'Name', 'Rank', 'recommendation1', 'recommendation2', 'recommendation3', 'recommendation4', 'recommendation5', 'recommendation6', 'category']
+  // const graphParameters =
 });
 /**
  * Object that will store the loaded data.
@@ -173,6 +192,10 @@ let data = {
 let kmeansData = {
   kmeans_scatterplot: undefined,
 };
+
+let graphData = {
+  graph: undefined,
+}
 
 
 

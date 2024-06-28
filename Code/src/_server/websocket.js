@@ -1,6 +1,7 @@
 //import * as csv from "csv-parser"
 import { parse } from "csv-parse";
 import * as fs from "fs"
+import * as path from 'path';
 import { print_clientConnected, print_clientDisconnected } from "./static/utils.js"
 import { TSNE } from "./tsne.js";
 // const preprocessing = require("./preprocessing.js")
@@ -10,6 +11,8 @@ import { extractRelevantColumns,normalizeData, transformToKMeansInput,transformF
 import { kMeans } from "./kmeans.js";
 import { LDA } from "./druidExample.js";
 import { get } from "http";
+
+
 
 const file_path = "./data/"
 const file_name = "boardgames_100.json"
@@ -163,6 +166,50 @@ export function setupConnection(socket) {
           parameters: parameters,
         });
       });
+  });
+
+  socket.on("getRelevantGraphData", (obj) => {
+    let parameters = obj.parameters;
+
+    let data = [];
+    fs.createReadStream(file_path + file_name_csv)
+        .pipe(parse({ delimiter: ',', columns: true }))
+        .on('data', (row) => {
+          data.push(row);
+        })
+        .on('end', () => {
+          let relevantData = filterTopRankedGames(data, parameters.top_rank);
+          relevantData = extractRelevantColumns(relevantData, parameters.features);
+
+          //relevantData = normalizeData(relevantData);
+          const nodes = []
+          Object.keys(relevantData).forEach((k,i) => {
+            nodes.push(relevantData[k]);
+          })
+          console.log("Nodes", nodes.length)
+          // let copy = Object.assign({}, relevantData);
+          // const __dirname = path.resolve(path.dirname(''));
+          // let json = { nodes };
+          // fs.writeFileSync(path.join(__dirname, 'test_6.json'), JSON.stringify(json, null, 4))
+          const links = []
+
+          const allIds = nodes.map(n => { return n.ID });
+          nodes.forEach((n,i) => {
+            // console.log("Node", i, ":", n);
+            if (n.recommendation1 && allIds.includes(n.recommendation1)) links.push({source: n.ID, target: n.recommendation1})
+            if (n.recommendation2 && allIds.includes(n.recommendation2)) links.push({source: n.ID, target: n.recommendation2})
+            if (n.recommendation3 && allIds.includes(n.recommendation3)) links.push({source: n.ID, target: n.recommendation3})
+            if (n.recommendation4 && allIds.includes(n.recommendation4)) links.push({source: n.ID, target: n.recommendation4})
+            if (n.recommendation5 && allIds.includes(n.recommendation5)) links.push({source: n.ID, target: n.recommendation5})
+            if (n.recommendation6 && allIds.includes(n.recommendation6)) links.push({source: n.ID, target: n.recommendation6})
+          })
+
+          socket.emit("RelevantGraphData", {
+            timestamp: new Date().getTime(),
+            data: {nodes, links},
+            parameters: parameters,
+          });
+        });
   });
 
 }
