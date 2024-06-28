@@ -30,11 +30,25 @@
       background: #3B8EA5;
       border: 1px solid #ccc;
       box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-      position: absolute; /* Use absolute positioning within the body */
-      top: 150px;          /* Top margin */
-      right: 10px;        /* Right margin */
+      position: absolute;
+      top: 180px;
+      right: 10px;
       height: auto;
-      max-height: calc(100% - 20px); /* Ensure it doesn't overflow the viewport */
+      max-height: calc(100% - 20px);
+      overflow-y: auto;
+      font-family: open-sans
+    }
+    #tool-window2 {
+      width: 300px;
+      padding: 10px;
+      background: #3B8EA5;
+      border: 1px solid #ccc;
+      box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+      position: absolute;
+      top: 480px;
+      right: 10px;
+      height: auto;
+      max-height: calc(100% - 20px);
       overflow-y: auto;
       font-family: open-sans
     }
@@ -46,11 +60,11 @@
       stroke: #999;
       stroke-opacity: 0.6;
     }
-    .highlight {
-      fill: none;
-      stroke: #ccc;
-      stroke-width: 2px;
-      stroke-dasharray: 5, 5; /* Optional: Dashed stroke */
+    .scroll-container {
+      width: 100%;
+      height: 800px;
+      overflow: auto;
+      border: 1px solid #ccc; /
     }
   </style>
 </head>
@@ -421,10 +435,17 @@
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
       <h1 style="font-family: open-sans">Board Game Recommendation Graph</h1>
-      <svg width="1600" height="1200" style="top: 20px; left: 15px; justify-content: center; display: flex"></svg>
+      <div class="scroll-container">
+        <svg width="1600" height="1200" style="top: 20px; left: 15px; justify-content: center; display: flex"></svg>
+      </div>
+
       <div id="tool-window">
         <h2>Node Details</h2>
         <div id="node-info"></div>
+      </div>
+      <div id="tool-window2">
+        <h2>Node Details</h2>
+        <div id="node-info2"></div>
       </div>
 <!--      <div class="visualizations_3">-->
 <!--        <div class="network">-->

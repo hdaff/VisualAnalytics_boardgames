@@ -121,7 +121,8 @@ document.addEventListener("DOMContentLoaded", function() {
   };
   let sampleParams = {
     top_rank: 100,
-    features: ['ID', 'Name', 'Rank', 'recommendation1', 'recommendation2', 'recommendation3','recommendation4','recommendation5','recommendation6', ]
+    features: ['ID', 'Name', 'Rank', 'category', 'mechanic', 'min_players', 'max_players', 'Year', 'Average', 'num_votes', 'min_time', 'max_time',
+      'recommendation1', 'recommendation2', 'recommendation3','recommendation4','recommendation5','recommendation6', ]
   }
   requestGraphData(sampleParams)
 

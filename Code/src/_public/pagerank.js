@@ -62,10 +62,10 @@ export function drawGraphNetwork(data) {
 
     const node = svg.append("g")
         .attr("class", "nodes")
-        .selectAll("g")
+        .selectAll("circle")
         .data(nodes)
-        .enter().append("g")
-        .attr("class", "node-group")
+        .enter().append("circle")
+        .attr("class", "node")
         .attr("r", d => 10 + d.pagerank * 100)  // Scale radius based on PageRank
         .attr("fill", (d, i) => {
             if (i === 0) return "rgb(212,175,55)";  // Highest ranked
@@ -77,7 +77,12 @@ export function drawGraphNetwork(data) {
             .on("start", dragstarted)
             .on("drag", dragged)
             .on("end", dragended))
-        .on("click", displayNodeInfo);
+        .on("click", displayNodeInfo)
+        .on('contextmenu', function(event, d) {
+            // Prevent the default context menu from appearing
+            event.preventDefault();
+            displayNodeInfo2(event,d);
+        });
 
     node.append("circle")
         .attr("class", "highlight")
@@ -95,7 +100,7 @@ export function drawGraphNetwork(data) {
             return "steelblue";  // Other nodes
         });
 
-    const tooltip = d3.select("network").append("div")
+    const tooltip = d3.select("body").append("div")
         .attr("class", "tooltip")
         .style("position", "absolute")
         .style("visibility", "hidden")
@@ -106,7 +111,7 @@ export function drawGraphNetwork(data) {
         .style("box-shadow", "0 0 10px rgba(0, 0, 0, 0.1)");
 
     node.on("mouseover", function (event, d) {
-        tooltip.html("Name:", d.name)
+        tooltip.html(d.Name)
             .style("visibility", "visible");
     })
         .on("mousemove", function (event) {
@@ -165,13 +170,31 @@ export function drawGraphNetwork(data) {
         const nodeInfo = `
         <strong>Name:</strong> ${d.Name}<br>
         <strong>Rank:</strong> ${d.Rank}<br>
-        <strong>Feature 2:</strong> ${d.feature2}<br>
-        <strong>Feature 3:</strong> ${d.feature3}<br>
-        <strong>Feature 4:</strong> ${d.feature4}<br>
-        <strong>Feature 5:</strong> ${d.feature5}<br>
+        <strong>Category</strong> ${d.category}<br>
+        <strong>Min Players / Max Players</strong> ${d.min_players} / ${d.max_players}<br>
+        <strong>Year</strong> ${d.Year}<br>
+        <strong>Average Rating</strong> ${d.Average}<br>
+        <strong>Num Votes</strong> ${d.num_votes}<br>
+        <strong> Min / Max Time</strong> ${d.min_time} / ${d.max_time}<br>
         <strong>PageRank:</strong> ${d.pagerank.toFixed(4)}
     `;
         d3.select("#node-info").html(nodeInfo);
+    }
+
+    function displayNodeInfo2(event, d) {
+
+        const nodeInfo = `
+        <strong>Name:</strong> ${d.Name}<br>
+        <strong>Rank:</strong> ${d.Rank}<br>
+        <strong>Category</strong> ${d.category}<br>
+        <strong>Min Players / Max Players</strong> ${d.min_players} / ${d.max_players}<br>
+        <strong>Year</strong> ${d.Year}<br>
+        <strong>Average Rating</strong> ${d.Average}<br>
+        <strong>Num Votes</strong> ${d.num_votes}<br>
+        <strong> Min / Max Time</strong> ${d.min_time} / ${d.max_time}<br>
+        <strong>PageRank:</strong> ${d.pagerank.toFixed(4)}
+    `;
+        d3.select("#node-info2").html(nodeInfo);
     }
 }
 
