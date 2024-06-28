@@ -58,7 +58,14 @@ export function drawGraphNetwork(data) {
         .selectAll("line")
         .data(links)
         .enter().append("line")
-        .attr("class", "link");
+        .attr("class", "link")
+        .attr('x1', d => nodes.find(n => n.ID === d.source).x)
+        .attr('y1', d => nodes.find(n => n.ID === d.source).y)
+        .attr('x2', d => nodes.find(n => n.ID === d.target).x)
+        .attr('y2', d => nodes.find(n => n.ID === d.target).y)
+        .attr('stroke', '#999')
+        .attr('stroke-width', 2)
+        .attr('marker-end', 'url(#arrowhead)');
 
     const node = svg.append("g")
         .attr("class", "nodes")
@@ -66,7 +73,7 @@ export function drawGraphNetwork(data) {
         .data(nodes)
         .enter().append("circle")
         .attr("class", "node")
-        .attr("r", d => 10 + d.pagerank * 100)  // Scale radius based on PageRank
+        .attr("r", d => 10 + d.pagerank * 100)
         .attr("fill", (d, i) => {
             if (i === 0) return "rgb(212,175,55)";  // Highest ranked
             if (i === 1) return "rgb(192,192,192)";  // Second highest
@@ -79,20 +86,19 @@ export function drawGraphNetwork(data) {
             .on("end", dragended))
         .on("click", displayNodeInfo)
         .on('contextmenu', function(event, d) {
-            // Prevent the default context menu from appearing
             event.preventDefault();
             displayNodeInfo2(event,d);
         });
 
     node.append("circle")
         .attr("class", "highlight")
-        .attr("r", d => 15 + d.pagerank * 50) // Adjust size based on PageRank or any other criteria
+        .attr("r", d => 15 + d.pagerank * 50)
         .style("visibility", "hidden");
 
 // Append the actual node circles
     node.append("circle")
         .attr("class", "node")
-        .attr("r", d => 10 + d.pagerank * 50)  // Scale radius based on PageRank
+        .attr("r", d => 10 + d.pagerank * 50)
         .attr("fill", (d, i) => {
             if (i === 0) return "gold";  // Highest ranked
             if (i === 1) return "silver";  // Second highest
